@@ -736,6 +736,12 @@ function save(st,done){
     var b=$('sv');if(b)b.disabled=false});
 }
 route();
+// Live lists: news and the Upcoming strip are kept in Supabase so scheduled updates don't need a redeploy.
+var SB_URL='https://rwgnqoekvafejhltqhri.supabase.co', SB_KEY='sb_publishable_eK00y0GIVEUcxrL_WwFZSQ_j69dqjnW';
+try{if(!(window.claude&&window.claude.use)&&window.fetch)fetch(SB_URL+'/rest/v1/site_lists?select=key,items',{headers:{apikey:SB_KEY}}).then(function(r){return r.ok?r.json():null}).then(function(rows){
+  if(!Array.isArray(rows))return;var ch=false;
+  rows.forEach(function(r){if((r.key==='news'||r.key==='upcoming')&&Array.isArray(r.items)&&r.items.length&&JSON.stringify(r.items)!==JSON.stringify(state[r.key])){state[r.key]=r.items;ch=true}});
+  if(ch){renderTick();if(!SEARCHING)route()}}).catch(function(){})}catch(e){}
 try{if(window.claude&&claude.use)claude.use('user').then(function(u){if(!u)return;
   Promise.resolve(u.isOwner()).then(function(o){var e=!!o;if(e!==EDIT){EDIT=e;route()}}).catch(function(){})})}catch(e){}
 try{if(window.claude&&claude.use)claude.use('artifact').then(function(a){art=a;if(!a){try{var s=JSON.parse(localStorage.getItem('csz_data'));if(s&&s.games){state=s;G=s.games;if(!state.news)state.news=[];if(!state.social)state.social=[];route()}}catch(e){}}})}catch(e){}
