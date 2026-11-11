@@ -305,6 +305,44 @@ h3.sub{font-size:18px;margin:14px 0 2px}
   .mast.open nav a.on{border-left-color:var(--red);background:#1e2b5c}
 }
 @media (prefers-reduced-motion:reduce){.burger span{transition:none}}
+/* Highlights: Rec League moments (first names only, final score, no player stats) */
+.sb{background:var(--navy);color:#fff;border-radius:8px;border-bottom:6px solid var(--red);padding:16px 18px 16px;margin:0 0 12px}
+.sb .k{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;font:700 14px var(--disp);letter-spacing:.08em;text-transform:uppercase;color:#ff8a97}
+.sb .k a{color:#fff;text-transform:none;letter-spacing:0;font:600 14px var(--body)}
+.sb .line{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;margin-top:10px}
+.sb .tm{display:flex;align-items:center;gap:12px}
+.sb .bar{width:10px;height:46px;border-radius:2px;flex:none}
+.sb .nm{font:800 22px/1.1 var(--disp);color:#fff}
+.sb .cap{font-size:13px;color:#c9d2ea}
+.sb .sc{font:800 58px/1 var(--disp);color:#fff}
+.sb .lose .nm,.sb .lose .sc{color:#aab4d4}
+.sb .fin{font:600 18px var(--disp);color:#c9d2ea;letter-spacing:.06em}
+.sb .win{font:700 12px var(--body);background:#fff;color:#16224a;padding:1px 6px;border-radius:3px;vertical-align:4px;margin-left:6px}
+.sb p{margin:12px 0 0;color:#e3e8f5;font-size:15px;font-weight:400;max-width:none}
+.sb .acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.sb.big .sc{font-size:72px}.sb.big .nm{font-size:28px}.sb.big .bar{height:60px}
+.plays{list-style:none;margin:0;padding:0}
+.plays li{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.plays li:last-child{border-bottom:0}
+.plays .n{font:800 32px/1 var(--disp);color:var(--red);width:28px;text-align:center;flex:none}
+.plays .t{font:700 16px/1.6 var(--disp);color:var(--mut);width:58px;flex:none}
+.plays .bd{flex:1;min-width:0}
+.plays .g{font-size:12px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.04em}
+.plays b{display:block;color:var(--ink);font-size:16px;line-height:1.3;margin:2px 0 3px}
+.plays p{margin:0;font-size:15px;line-height:1.45}
+.plays .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.plays .btn svg{flex:none}
+.hlnote{font-size:13px;color:var(--mut);margin:8px 0 0}
+.recs div{padding:6px 0;font-size:15px}.recs .l{display:block;font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em}.recs b{color:var(--ink)}
+.teams{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:0 0 12px}
+.teams .sec{margin:0}
+.teams ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:16px}
+.teams b{color:var(--ink)}
+.sec.tr{border-top:4px solid var(--red)}.sec.tb{border-top:4px solid var(--blue)}.sec.tn{border-top:4px solid var(--navy)}
+.deb{font:700 11px var(--body);background:var(--redsoft);color:var(--red-d);padding:2px 6px;border-radius:3px;margin-left:4px;white-space:nowrap}
+.gl{margin:0;padding-left:22px;font-size:15px;line-height:1.8}@media (min-width:700px){.gl{columns:2}}
+.crumb{font-size:14px;margin:0 0 10px;color:var(--mut)}
+#menu .nw{font:700 10px var(--body);background:var(--red);color:#fff;padding:1px 5px;border-radius:3px;margin-left:5px;vertical-align:2px;letter-spacing:0}
 </style>
 </head>
 <body>
@@ -342,7 +380,7 @@ function today(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+
 
 var root=$('root');
 root.innerHTML='<header class="mast"><div class="in"><a class="brand" href="#home" aria-label="CSz Portland Rec League, home">CSz REC LEAGUE <span class="pdx">PDX</span></a>'+
- '<nav id="menu" aria-label="Main"><a href="#home" id="n_home">Home</a><a href="#news" id="n_news">News</a><a href="#resources" id="n_resources">Resources</a><a href="#games" id="n_games">Games</a></nav>'+
+ '<nav id="menu" aria-label="Main"><a href="#home" id="n_home">Home</a><a href="#news" id="n_news">News</a><a href="#highlights" id="n_highlights">Highlights<span class="nw">NEW</span></a><a href="#resources" id="n_resources">Resources</a><a href="#games" id="n_games">Games</a></nav>'+
  '<div class="srch"><input id="gq" type="search" placeholder="Search" aria-label="Search the site" autocomplete="off"></div>'+
  '<button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button></div></header>'+
  '<div class="disc"><p>Unofficial resource page. Not run by Portland Comedy Theater or CSz.</p></div>'+
@@ -402,14 +440,16 @@ function upcomingForm(){
 
 function route(){main.onclick=null;if(SEARCHING){SEARCHING=false;$('gq').value=''}var h=hashNow();
   var m=/^game-(\d+)$/.exec(h), tab='home';
-  if(m||h==='games'||h==='lookup'||h==='pick')tab='games';else if(h==='news')tab='news';else if(/^(resources|info|schedule|shows|pdx|dipwad)$/.test(h))tab='resources';
-  ['home','news','resources','games'].forEach(function(t){$('n_'+t).className=t===tab?'on':''});
+  var hm=/^match-(\d{4}-\d{2}-\d{2})$/.exec(h);
+  if(m||h==='games'||h==='lookup'||h==='pick')tab='games';else if(h==='news')tab='news';else if(h==='highlights'||hm)tab='highlights';else if(/^(resources|info|schedule|shows|pdx|dipwad)$/.test(h))tab='resources';
+  ['home','news','highlights','resources','games'].forEach(function(t){$('n_'+t).className=t===tab?'on':''});
   renderTick();
   if(h==='upcoming-edit'){if(EDIT)return upcomingForm();}
   if(m&&byId(m[1]))return gamePage(byId(m[1]));
   if(h==='pick'){GMODE='pick';return gamesPage()}
   if(tab==='games')return gamesPage();
   if(tab==='news')return newsPage();
+  if(tab==='highlights')return highlightsPage(hm?hm[1]:null);
   if(tab==='resources'){infoPage();addToc();if(h==='shows'||h==='pdx'||h==='dipwad'){var el=$(h);if(el)el.scrollIntoView()}return}
   return homePage();}
 var CURH=null;
@@ -420,15 +460,83 @@ window.addEventListener('popstate',function(){CURH=null;route()});
 document.addEventListener('click',function(e){if(e.defaultPrevented&&!e.target.closest('a[href^="#"]'))return;var a=e.target.closest&&e.target.closest('a[href^="#"]');if(!a||e.metaKey||e.ctrlKey||e.shiftKey)return;
   var h=a.getAttribute('href').slice(1);if(!h)return;e.preventDefault();e.stopImmediatePropagation();setMenu(false);go(h)},true);
 
+/* ================= HIGHLIGHTS (Rec League moments) =================
+   First names only. Final score and winner are fine; no player stats.
+   Live copy comes from Supabase site_lists key "highlights"; this is the fallback. */
+var HL_DEFAULT=[{"date":"2026-11-08","video":"8s5WcO_kC88","ref":"Karissa",
+ "red":{"score":30,"captain":"Rick","players":["Nancy","Sav","Spencer"]},
+ "blue":{"score":29,"captain":"Katya","players":["Jeff","Matt","Calan"]},
+ "debuts":{"Spencer":"First match","Calan":"First Rec League match"},
+ "crew":[["Kevin","Sound (finished at −9 points)"],["Rachel","Screens"]],
+ "summary":"Blue trailed 20–15 heading into Hey, Waiter and came back to within one. Debuts for Calan and Spencer. Ref: Karissa.",
+ "games":["Top That (both teams)","Foreign Movie (blue) vs. Advice Panel (red)","New Choice (red) vs. Four Square (blue)","Hot Bell (both teams)","Pass the Mic (both teams)","Dance Party (both teams)","Hey, Waiter (both teams)"],
+ "records":[["Applause-o-meter record","9.3 · Red, Advice Panel"],["Sound booth’s final score","−9 · Kevin"],["Debuts","Calan, Spencer"]],
+ "moments":[
+  {"t":456,"top":1,"game":"Groaner foul · Pre-show","title":"The sound guy goes negative","blurb":"Kevin demonstrates a groaner (“How does a math teacher say goodbye? Calculator!”), gets docked 8 points, and keeps reporting his own sinking score all night."},
+  {"t":625,"game":"Coin toss","title":"Rock, Paper, Scissors, Infinity","blurb":"Rick rolls back time to get the weekend back. Katya counters with a Space Invader."},
+  {"t":1337,"top":2,"game":"Advice Panel","title":"Docked for trash talk","blurb":"Rick: “Unlike the blue team, the red team believes in helping people.” Ref Karissa takes away a point for being mean."},
+  {"t":1668,"game":"Advice Panel","title":"The Grinch joins a nonprofit board","blurb":"His plan: get on the board, then steal all the money."},
+  {"t":1777,"top":3,"game":"Foreign Movie vs. Advice Panel","title":"A Rec League record, briefly","blurb":"Blue’s “Diplodocus Tsunami” hits 8.1 on the applause-o-meter, a Rec League record. Red breaks it seconds later with a 9.3."},
+  {"t":3005,"top":5,"game":"Hot Bell","title":"Here’s looking at you, Les Mis","blurb":"Red’s guesser, clued for Casablanca, lands confidently on “Les Mis.”"},
+  {"t":4420,"game":"Pass the Mic","title":"“Different meaning, same spelling, I’m counting it”","blurb":"Karissa allows a creative rhyme to keep the round alive."},
+  {"t":5018,"top":4,"game":"Hey, Waiter","title":"There’s a zebra in my soup","blurb":"“Clearly you asked for the chicken. It’s there in black and white.”"}
+ ]}];
+if(!state.highlights)state.highlights=HL_DEFAULT;
+var PLAYSVG='<svg aria-hidden="true" width="10" height="12" viewBox="0 0 10 12"><path d="M0 0L10 6L0 12Z" fill="currentColor"></path></svg>';
+function hlMatches(){return (state.highlights||[]).slice().sort(function(a,b){return (b.date||'').localeCompare(a.date||'')})}
+function hlUrl(m,t){return 'https://youtu.be/'+encodeURIComponent(m.video)+(t?'?t='+(+t):'')}
+function hlTime(t){t=+t||0;var h=Math.floor(t/3600),mi=Math.floor(t%3600/60),s=t%60;return (h?h+':'+('0'+mi).slice(-2):mi)+':'+('0'+s).slice(-2)}
+function hlDay(d){var p=(d||'').split('-');if(p.length!==3)return esc(d);return new Date(+p[0],+p[1]-1,+p[2]).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}
+function hlWinner(m){return m.red.score>m.blue.score?'red':m.blue.score>m.red.score?'blue':''}
+function scoreboard(m,big){var w=hlWinner(m);
+  function side(c,lab,col,rev){var t=m[c],cls='tm'+(w&&w!==c?' lose':'');
+    var name='<div><div class="nm">'+lab+(w===c?'<span class="win">WIN</span>':'')+'</div><div class="cap">Capt. '+esc(t.captain)+'</div></div>',
+      bar='<div class="bar" style="background:'+col+'"></div>',sc='<div class="sc">'+(+t.score)+'</div>';
+    return '<div class="'+cls+'">'+(rev?sc+name+bar:bar+name+sc)+'</div>'}
+  return '<section class="sb'+(big?' big':'')+'" aria-label="Final score"><div class="k"><span>'+(big?'Rec League match · ':'Last match · ')+hlDay(m.date)+'</span>'+
+  (big?'':'<a href="#match-'+esc(m.date)+'">Full recap →</a>')+'</div>'+
+  '<div class="line">'+side('red','RED','#d7263d')+'<div class="fin">FINAL</div>'+side('blue','BLUE','#2f5bd3',1)+'</div>'+
+  (m.summary?'<p>'+esc(m.summary)+'</p>':'')+
+  (big?'<div class="acts"><a class="btn red" href="'+hlUrl(m)+'" target="_blank" rel="noopener">'+PLAYSVG+'Watch the full match</a></div>':'')+'</section>'}
+function playItem(m,x,lead){return '<li>'+lead+'<div class="bd"><div class="g">'+esc(x.game)+'</div><b>'+esc(x.title)+'</b><p>'+esc(x.blurb)+'</p>'+
+  '<div class="acts"><a class="btn red sm" href="'+hlUrl(m,x.t)+'" target="_blank" rel="noopener">'+PLAYSVG+'Watch · '+hlTime(x.t)+'</a>'+
+  '<button type="button" class="btn sm cpy" data-u="'+hlUrl(m,x.t)+'">Copy link</button></div></div></li>'}
+function topPlays(m){var tp=(m.moments||[]).filter(function(x){return x.top}).sort(function(a,b){return a.top-b.top});
+  if(!tp.length)return '';
+  return '<section class="sec"><div class="row between"><h2>Top plays of the week</h2><a href="#match-'+esc(m.date)+'" class="small" style="text-transform:none;letter-spacing:0;font:600 14px var(--body)">All highlights</a></div>'+
+  '<ol class="plays">'+tp.map(function(x,i){return playItem(m,x,'<span class="n" aria-hidden="true">'+(i+1)+'</span>')}).join('')+'</ol>'+
+  '<p class="hlnote">First names only. Want a moment taken down? Ask Kevin or Katya'+(discordLive()?' or post in the '+ext(DISCORD,'Discord'):'')+'.</p></section>'}
+function recordBook(m){if(!m||!m.records||!m.records.length)return '';
+  return '<section class="sec recs"><h2>Rec League record book</h2>'+m.records.map(function(r){return '<div><span class="l">'+esc(r[0])+'</span><b>'+esc(r[1])+'</b> <span class="mut small">· '+hlDay(m.date)+'</span></div>'}).join('')+'</section>'}
+function highlightsPage(date){var M=hlMatches(),m=null;
+  for(var i=0;i<M.length;i++)if(!date||M[i].date===date){m=M[i];break}
+  if(!m){main.innerHTML='<section class="sec"><h2>Highlights</h2><div class="empty">No highlights yet.</div></section>';return}
+  var deb=m.debuts||{};
+  function li(n,cap){return '<li>'+(cap?'<b>'+esc(n)+'</b> <span class="mut">· Captain</span>':esc(n))+(deb[n]?' <span class="deb">'+esc(deb[n]).toUpperCase()+'</span>':'')+'</li>'}
+  function team(c,lab,cls){var t=m[c];return '<section class="sec '+cls+'"><h2>'+lab+'</h2><ul>'+li(t.captain,1)+t.players.map(function(n){return li(n)}).join('')+'</ul></section>'}
+  var others=M.filter(function(x){return x!==m});
+  main.innerHTML='<p class="crumb"><a href="#home">Home</a> / <a href="#highlights">Highlights</a> / '+hlDay(m.date)+'</p>'+scoreboard(m,1)+
+  '<div class="teams">'+team('red','Red team','tr')+team('blue','Blue team','tb')+
+  '<section class="sec tn"><h2>Officials &amp; crew</h2><ul><li><b>'+esc(m.ref)+'</b> <span class="mut">· Ref</span></li>'+(m.crew||[]).map(function(c){return '<li>'+esc(c[0])+' <span class="mut">· '+esc(c[1])+'</span></li>'}).join('')+'</ul></section></div>'+
+  '<section class="sec"><h2>Highlights</h2><ol class="plays">'+(m.moments||[]).slice().sort(function(a,b){return a.t-b.t}).map(function(x){return playItem(m,x,'<span class="t">'+hlTime(x.t)+'</span>')}).join('')+'</ol></section>'+
+  (m.games&&m.games.length?'<section class="sec"><h2>Games played</h2><ol class="gl">'+m.games.map(function(g){return '<li>'+esc(g)+'</li>'}).join('')+'</ol></section>':'')+
+  (others.length?'<section class="sec"><h2>More matches</h2><ul class="plays">'+others.map(function(x){var w=hlWinner(x);return '<li><div class="bd"><a href="#match-'+esc(x.date)+'"><b>'+hlDay(x.date)+'</b></a><p>'+(w?w.toUpperCase()+' wins ':'Tie ')+Math.max(x.red.score,x.blue.score)+'–'+Math.min(x.red.score,x.blue.score)+'</p></div></li>'}).join('')+'</ul></section>':'')+
+  '<p class="hlnote">Unofficial. Performers are listed by first name only. Want a moment taken down? Ask Kevin or Katya'+(discordLive()?' or post in the '+ext(DISCORD,'Discord'):'')+'.</p>'}
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.cpy');if(!b)return;var u=b.dataset.u;
+  function done(){b.textContent='Link copied';setTimeout(function(){b.textContent='Copy link'},1600)}
+  try{navigator.clipboard.writeText(u).then(done,function(){prompt('Copy this link:',u)})}catch(x){prompt('Copy this link:',u)}});
+
 /* ================= HOME ================= */
 function sortedNews(){return state.news.slice().sort(function(a,b){return (b.date||'').localeCompare(a.date||'')||b.id-a.id})}
 function homePage(){
-  var N=sortedNews();
+  var N=sortedNews(),LM=hlMatches()[0];
   main.innerHTML='<div class="homegrid"><div>'+
   '<section class="hero"><p class="kick">Rec League Workshops</p><h1>(Almost) every Wednesday, 7&ndash;9 PM</h1>'+
   '<p>At Portland Comedy Theater. $15 per Workshop.</p>'+
   '<div class="acts"><a class="btn red" href="'+SCHED+'" target="_blank" rel="noopener"><img src="'+HOG+'" alt="">Open SchedgeHog</a>'+
   (discordLive()?'<a class="btn wht" href="'+DISCORD+'" target="_blank" rel="noopener"><img class="logo" src="'+DCLOGO+'" alt="">Join the Discord</a>':'')+'</div></section>'+
+
+  (LM?scoreboard(LM)+topPlays(LM):'')+
 
   '<section class="sec" id="latest"><div class="row between"><h2>Top headlines</h2><a href="#news" class="small" style="text-transform:none;letter-spacing:0;font:600 14px var(--body)">All news</a></div>'+
   (N.length?'<ul class="hl">'+N.slice(0,6).map(function(n,i){var b=noUrls(n.body.replace(/\s+/g,' '));
@@ -436,14 +544,14 @@ function homePage(){
     return '<li><button data-i="'+i+'"><span class="d">'+d+'</span><span><b>'+esc(n.title||'Rec League update')+'</b><span class="x">'+esc(b.length>110?b.slice(0,110).replace(/\s+\S*$/,'')+'…':b)+'</span></span></button></li>'}).join('')+'</ul>':'<div class="empty">No news yet.</div>')+
   '</section></div>'+
 
-  '<section class="sec"><h2>New to Rec League?</h2><p class="lede">All graduates of 301 are welcome. Here&rsquo;s how to get started.</p><ol class="steps">'+
+  '<div>'+'<section class="sec"><h2>New to Rec League?</h2><p class="lede">All graduates of 301 are welcome. Here&rsquo;s how to get started.</p><ol class="steps">'+
   '<li><div><b>Come to a Workshop</b><p>Workshops are (almost) every Wednesday, 7&ndash;9 PM, $15 (Venmo, card, or cash). Park in the Ace Hardware lot (open from 6:30 PM) or on the street nearby.</p></div></li>'+
   '<li><div><b>Email Brooke</b><p>Email '+MAIL+' to get added to the Rec League email list. If you want to be in Rec League shows, tell her that too: you need to check in with her before you can be in one.</p></div></li>'+
   '<li><div><b>Check out SchedgeHog</b><p>It&rsquo;s where the schedule lives. Mark your availability for upcoming shows there. '+ext(SIGNIN,'Sign-in page')+'</p></div></li>'+
   '<li><div><b>Join the LaughKraft Discord</b><p>'+(discordLive()?ext(DISCORD,'Use this invite link')+', or ask':'Ask')+' Kevin or Katya to add you. Watch the #announcements channel: some nights there&rsquo;s a code for free tickets.</p></div></li>'+
   '<li><div><b>Stick around after</b><p>Rec Leaguers head out for drinks just about every Wednesday after the Workshop, usually at Triple Lindy.</p></div></li>'+
   '</ol><p class="small mut" style="margin:6px 0 0">More on the <a href="#resources">Resources</a> page. Want to catch a show? See <a href="#shows">how to see shows, cheap or free</a>.</p></section>'+
-  '</div>';
+  recordBook(LM)+'</div></div>';
   main.onclick=function(e){var b=e.target.closest('.hl button');if(!b)return;var i=+b.dataset.i;go('news');setTimeout(function(){var p=main.querySelectorAll('article.post')[i];if(p)p.scrollIntoView({block:'start'})},40)};
 }
 function newsPage(){
@@ -740,7 +848,7 @@ route();
 var SB_URL='https://rwgnqoekvafejhltqhri.supabase.co', SB_KEY='sb_publishable_eK00y0GIVEUcxrL_WwFZSQ_j69dqjnW';
 try{if(!(window.claude&&window.claude.use)&&window.fetch)fetch(SB_URL+'/rest/v1/site_lists?select=key,items',{headers:{apikey:SB_KEY}}).then(function(r){return r.ok?r.json():null}).then(function(rows){
   if(!Array.isArray(rows))return;var ch=false;
-  rows.forEach(function(r){if((r.key==='news'||r.key==='upcoming')&&Array.isArray(r.items)&&r.items.length&&JSON.stringify(r.items)!==JSON.stringify(state[r.key])){state[r.key]=r.items;ch=true}});
+  rows.forEach(function(r){if((r.key==='news'||r.key==='upcoming'||r.key==='highlights')&&Array.isArray(r.items)&&r.items.length&&JSON.stringify(r.items)!==JSON.stringify(state[r.key])){state[r.key]=r.items;ch=true}});
   if(ch){renderTick();if(!SEARCHING)route()}}).catch(function(){})}catch(e){}
 try{if(window.claude&&claude.use)claude.use('user').then(function(u){if(!u)return;
   Promise.resolve(u.isOwner()).then(function(o){var e=!!o;if(e!==EDIT){EDIT=e;route()}}).catch(function(){})})}catch(e){}
