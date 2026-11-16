@@ -342,6 +342,7 @@ h3.sub{font-size:18px;margin:14px 0 2px}
 .deb{font:700 11px var(--body);background:var(--redsoft);color:var(--red-d);padding:2px 6px;border-radius:3px;margin-left:4px;white-space:nowrap}
 .gl{margin:0;padding-left:22px;font-size:15px;line-height:1.8}@media (min-width:700px){.gl{columns:2}}
 .crumb{font-size:14px;margin:0 0 10px;color:var(--mut)}
+.hl-mob{display:none}@media (max-width:640px){.hl-desk{display:none}.hl-mob{display:block}}
 #menu .nw{font:700 10px var(--body);background:var(--red);color:#fff;padding:1px 5px;border-radius:3px;margin-left:5px;vertical-align:2px;letter-spacing:0}
 </style>
 </head>
@@ -536,7 +537,7 @@ function homePage(){
   '<div class="acts"><a class="btn red" href="'+SCHED+'" target="_blank" rel="noopener"><img src="'+HOG+'" alt="">Open SchedgeHog</a>'+
   (discordLive()?'<a class="btn wht" href="'+DISCORD+'" target="_blank" rel="noopener"><img class="logo" src="'+DCLOGO+'" alt="">Join the Discord</a>':'')+'</div></section>'+
 
-  (LM?scoreboard(LM)+topPlays(LM):'')+
+  (LM?'<div class="hl-desk">'+scoreboard(LM)+topPlays(LM)+'</div>':'')+
 
   '<section class="sec" id="latest"><div class="row between"><h2>Top headlines</h2><a href="#news" class="small" style="text-transform:none;letter-spacing:0;font:600 14px var(--body)">All news</a></div>'+
   (N.length?'<ul class="hl">'+N.slice(0,6).map(function(n,i){var b=noUrls(n.body.replace(/\s+/g,' '));
@@ -551,7 +552,8 @@ function homePage(){
   '<li><div><b>Join the LaughKraft Discord</b><p>'+(discordLive()?ext(DISCORD,'Use this invite link')+', or ask':'Ask')+' Kevin or Katya to add you. Watch the #announcements channel: some nights there&rsquo;s a code for free tickets.</p></div></li>'+
   '<li><div><b>Stick around after</b><p>Rec Leaguers head out for drinks just about every Wednesday after the Workshop, usually at Triple Lindy.</p></div></li>'+
   '</ol><p class="small mut" style="margin:6px 0 0">More on the <a href="#resources">Resources</a> page. Want to catch a show? See <a href="#shows">how to see shows, cheap or free</a>.</p></section>'+
-  recordBook(LM)+'</div></div>';
+  '<div class="hl-desk">'+recordBook(LM)+'</div></div>'+
+  (LM?'<div class="hl-mob">'+scoreboard(LM)+topPlays(LM)+recordBook(LM)+'</div>':'')+'</div>';
   main.onclick=function(e){var b=e.target.closest('.hl button');if(!b)return;var i=+b.dataset.i;go('news');setTimeout(function(){var p=main.querySelectorAll('article.post')[i];if(p)p.scrollIntoView({block:'start'})},40)};
 }
 function newsPage(){
